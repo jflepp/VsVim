@@ -14,6 +14,7 @@ type SnapshotWordUtil(_keywordCharSet: VimCharSet) =
     member x.KeywordCharSet = _keywordCharSet
     member x.IsBigWordChar c = not (Char.IsWhiteSpace(c))
     member x.IsNormalWordChar c = _keywordCharSet.Contains c
+    member x.IsSmallWordChar c = x.IsNormalWordChar c && Char.IsLower(c)
     member x.IsBigWordOnlyChar c = (not (x.IsNormalWordChar c)) && (not (Char.IsWhiteSpace(c)))
 
     member x.IsKeywordChar c = x.KeywordCharSet.Contains c
@@ -30,6 +31,10 @@ type SnapshotWordUtil(_keywordCharSet: VimCharSet) =
             else
                 let predicate = 
                     match wordKind with
+                    | WordKind.SmallWord ->
+                        if x.IsSmallWordChar c then x.IsSmallWordChar
+                        else if x.IsNormalWordChar c then (fun char -> x.IsNormalWordChar char && not (x.IsSmallWordChar char))
+                        else x.IsBigWordOnlyChar
                     | WordKind.NormalWord -> 
                         if x.IsNormalWordChar c then x.IsNormalWordChar
                         else x.IsBigWordOnlyChar

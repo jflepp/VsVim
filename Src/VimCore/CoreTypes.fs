@@ -5,6 +5,7 @@ open System.Diagnostics
 [<RequireQualifiedAccess>]
 [<NoComparison>]
 type WordKind = 
+    | SmallWord
     | NormalWord
     | BigWord
 
