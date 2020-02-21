@@ -32,9 +32,19 @@ type SnapshotWordUtil(_keywordCharSet: VimCharSet) =
                 let predicate = 
                     match wordKind with
                     | WordKind.SmallWord ->
-                        if x.IsSmallWordChar c then x.IsSmallWordChar
-                        else if x.IsNormalWordChar c then (fun char -> x.IsNormalWordChar char && not (x.IsSmallWordChar char))
-                        else x.IsBigWordOnlyChar
+                        let mutable isFirst = x.IsSmallWordChar c
+                        let getIsFirst() =
+                            let wasFirst = isFirst
+                            isFirst <- false
+                            wasFirst
+
+                        (fun char -> 
+                            let isFirst = getIsFirst()
+                            if x.IsSmallWordChar char then x.IsSmallWordChar char
+                            else if x.IsNormalWordChar c then
+                                if isFirst then x.IsNormalWordChar char
+                                else x.IsSmallWordChar char
+                            else x.IsBigWordOnlyChar char)
                     | WordKind.NormalWord -> 
                         if x.IsNormalWordChar c then x.IsNormalWordChar
                         else x.IsBigWordOnlyChar

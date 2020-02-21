@@ -46,6 +46,13 @@ namespace Vim.UnitTest
             }
 
             [WpfTheory]
+            [InlineData("catDogFish", new[] { "cat", "Dog", "Fish" })]
+            public void Small(string text, string[] expected)
+            {
+                AssertWordSpans(WordKind.SmallWord, text, expected);
+            }
+
+            [WpfTheory]
             [InlineData("cat dog fish!", new[] { "cat", "dog", "fish", "!" })]
             [InlineData("cat123    dog", new[] { "cat123", "dog" })]
             [InlineData("cat123\tdog", new[] { "cat123", "dog" })]
